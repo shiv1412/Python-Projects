@@ -10,6 +10,8 @@ import pandas as pd
 import scipy.stats as stats
 import matplotlib.pyplot as plt
 import math
+import scipy.stats as st
+import scipy.special as sp
 
 np.random.seed(60)
 population_ages1 = stats.poisson.rvs(loc=18,mu=35,size=15000)
@@ -107,3 +109,54 @@ plt.text(x=2.5, y=0.13, s= "Alternative")
 plt.text(x=2.1, y=0.01, s= "Type 1 Error")
 plt.text(x=-3.2, y=0.01, s= "Type 1 Error")
 plt.text(x=0, y=0.02, s= "Type 2 Error")
+
+# z test
+import numpy as np
+import pandas as pd
+import scipy.stats as stats
+import matplotlib.pyplot as plt
+import math
+import scipy.stats as st
+import scipy.special as sp
+n = 100
+h = 61
+q = .5
+xbar = float(h)/ n
+z = (xbar - q) * np.sqrt(n / (q * (1-q)))
+print(z)
+pval = 2*(1-st.norm.cdf(z))
+print(pval)
+
+# Annova test
+import pandas as pd
+d = pd.read_csv("https://reneshbedre.github.io/myfiles/anova/onewayanova.txt", sep="\t")
+d.boxplot(column=['A','B','C', 'D'],grid=False)
+import scipy.stats as stats
+fvalue,pvalue = stats.f_oneway(d['A'],d['B'],d['C'],d['D'])
+print(fvalue,pvalue)
+import statsmodels.api as sm
+from statsmodels.formula.api import ols
+d_melt = pd.melt(d.reset_index(),id_vars=['index'],value_vars=['A','B','C','D'])
+d_melt.columns = ['index','treatments','value']
+model = ols('value ~ C(treatments)',data=d_melt).fit()
+anova_table = sm.stats.anova_lm(model,typ=2)
+anova_table
+from statsmodels.stats.multicomp import pairwise_tukeyhsd
+m_comp = pairwise_tukeyhsd(endog=d_melt['value'], groups=d_melt['treatments'], alpha=0.05)
+print(m_comp)
+
+w, pvalue = stats.shapiro(model.resid)
+print(w, pvalue)
+
+# Two way Annova
+import pandas as pd
+import seaborn as sns
+d = pd.read_csv("https://reneshbedre.github.io/myfiles/anova/twowayanova.txt", sep="\t")
+d_melt = pd.melt(d, id_vars=['Genotype'], value_vars=['1_year', '2_year', '3_year'])
+d_melt.columns = ['Genotype', 'years', 'value']
+sns.boxplot(x="Genotype", y="value", hue="years", data=d_melt, palette="Set3") 
+import statsmodels.api as sm
+from statsmodels.formula.api import ols
+model = ols('value ~ C(Genotype) + C(years) + C(Genotype):C(years)', data=d_melt).fit()
+anova_table = sm.stats.anova_lm(model, typ=2)
+anova_table
