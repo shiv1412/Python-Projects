@@ -25,7 +25,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=1)
 knn = KNeighborsClassifier(n_neighbors=5, metric='euclidean')
 knn.fit(X_train, y_train)
 y_pred = knn.predict(X_test)
-
+print(y_pred)
 sns.scatterplot(
     x='mean area',
     y='mean compactness',
@@ -41,4 +41,5 @@ plt.scatter(
     alpha=0.7
 )
 
-confusion_matrix(y_test, y_pred)
+cf = confusion_matrix(y_test, y_pred)
+print(cf)
