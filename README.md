@@ -1,2 +1,2 @@
-# Python-Projects
-# Academic Projects and assignments
+Python-Projects
+Academic Projects and assignments
